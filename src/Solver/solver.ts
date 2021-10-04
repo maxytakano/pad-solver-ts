@@ -1,3 +1,5 @@
+import { MinPriorityQueue } from '@datastructures-js/priority-queue'
+
 type Maybe<T> = T | null | undefined
 
 enum OrbType {
@@ -20,8 +22,6 @@ const BOARD_BUFFER_SIZE = (ORB_TYPES * BIT_BOARD_SIZE) / BYTE_SIZE
 
 // 2d array representation of board state
 type Position = OrbType[][]
-// bitboard representation of board state
-type Board = ArrayBuffer
 
 const testPosition: Position = [
   [OrbType.Fire, OrbType.Earth, OrbType.Earth, OrbType.Water],
@@ -37,7 +37,9 @@ const testTarget: Position = [
   [OrbType.Fire, OrbType.Fire, OrbType.Fire, OrbType.Fire],
 ]
 
-function createBoard(position: Position): Maybe<Board> {
+// Creates bitboard representation of board state, represented by a
+// BigUint64Array ArrayBuffer
+function createBoard(position: Position): Maybe<ArrayBuffer> {
   const height = position.length
   const width = position[0].length
   const size = height * width
@@ -58,12 +60,33 @@ function createBoard(position: Position): Maybe<Board> {
   return board
 }
 
+type Move = {
+  board: ArrayBuffer
+  previous: Maybe<Move>
+  moves: number
+}
+
 export function solvePosition(
   start: Position,
   target: Position
 ): Maybe<Position> {
   // create bitboard representation
-  const bb = createBoard(start)
+  const startBitboard = createBoard(start)
+  if (startBitboard == null) return null
+  const frontier = new MinPriorityQueue<Move>({
+    compare: (m1, m2) => {},
+  })
+  const explored = new Set<ArrayBuffer>()
+  frontier.enqueue({
+    board: startBitboard,
+    previous: null,
+    moves: 0,
+  })
+
+  while (!frontier.isEmpty()) {
+    const bestMove = frontier.dequeue()
+    // explored.add(bestMove)
+  }
 
   return null
 }
