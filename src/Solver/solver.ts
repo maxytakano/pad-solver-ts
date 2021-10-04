@@ -46,16 +46,14 @@ function createBoard(position: Position): Maybe<Board> {
     return null
   }
   const board = new ArrayBuffer(BOARD_BUFFER_SIZE)
-  const view = new Uint32Array(board)
-  console.log(position)
-  let mask: number, row, col
+  const view = new BigUint64Array(board)
   for (let i = 0; i < size; i++) {
-    mask = 1 << i
-    row = Math.floor(i / width)
-    col = i % width
+    const mask = 1n << BigInt(i)
+    const row = Math.floor(i / width)
+    const col = i % width
     const orbType = position[row][col]
-    const offset = i > 31 ? orbType * 2 + 1 : orbType * 2
-    view[offset] |= mask
+
+    view[orbType] |= mask
   }
   return board
 }
