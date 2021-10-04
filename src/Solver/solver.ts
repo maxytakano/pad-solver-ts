@@ -74,7 +74,10 @@ export function solvePosition(
   const startBitboard = createBoard(start)
   if (startBitboard == null) return null
   const frontier = new MinPriorityQueue<Move>({
-    compare: (m1, m2) => {},
+    compare: (m1, m2) => {
+      const moveComponent = m1.moves - m2.moves
+      // const hammingComponent =
+    },
   })
   const explored = new Set<ArrayBuffer>()
   frontier.enqueue({
