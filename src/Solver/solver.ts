@@ -2,7 +2,7 @@ import { MinPriorityQueue } from '@datastructures-js/priority-queue'
 
 type Maybe<T> = T | null | undefined
 
-enum OrbType {
+export enum OrbType {
   Fire = 0,
   Earth = 1,
   Water = 2,
@@ -21,16 +21,17 @@ const ORB_TYPES = Object.keys(OrbType).length / 2
 const BOARD_BUFFER_SIZE = (ORB_TYPES * BIT_BOARD_SIZE) / BYTE_SIZE
 
 // 2d array representation of board state
-type Position = OrbType[][]
+export type Position = OrbType[][]
+export type Board = ArrayBuffer
 
-const testPosition: Position = [
+export const testPosition: Position = [
   [OrbType.Fire, OrbType.Earth, OrbType.Earth, OrbType.Water],
   [OrbType.Earth, OrbType.Fire, OrbType.Fire, OrbType.Water],
   [OrbType.Dark, OrbType.Dark, OrbType.Dark, OrbType.Water],
   [OrbType.Fire, OrbType.Fire, OrbType.Fire, OrbType.Water],
 ]
 
-const testTarget: Position = [
+export const testTarget: Position = [
   [OrbType.Earth, OrbType.Earth, OrbType.Water, OrbType.Water],
   [OrbType.Earth, OrbType.Fire, OrbType.Fire, OrbType.Water],
   [OrbType.Dark, OrbType.Dark, OrbType.Dark, OrbType.Water],
@@ -39,7 +40,7 @@ const testTarget: Position = [
 
 // Creates bitboard representation of board state, represented by a
 // BigUint64Array ArrayBuffer
-function createBoard(position: Position): Maybe<ArrayBuffer> {
+export function createBoard(position: Position): Maybe<Board> {
   const height = position.length
   const width = position[0].length
   const size = height * width
@@ -61,9 +62,13 @@ function createBoard(position: Position): Maybe<ArrayBuffer> {
 }
 
 type Move = {
-  board: ArrayBuffer
+  board: Board
   previous: Maybe<Move>
   moves: number
+}
+
+export function hamming(b1: Board, b2: Board): number {
+  return 0
 }
 
 export function solvePosition(
@@ -71,17 +76,20 @@ export function solvePosition(
   target: Position
 ): Maybe<Position> {
   // create bitboard representation
-  const startBitboard = createBoard(start)
-  if (startBitboard == null) return null
+  const startBoard = createBoard(start)
+  const targetBoard = createBoard(target)
+  if (startBoard == null || targetBoard == null) return null
   const frontier = new MinPriorityQueue<Move>({
     compare: (m1, m2) => {
       const moveComponent = m1.moves - m2.moves
-      // const hammingComponent =
+      const hammingComponent =
+        hamming(m1.board, targetBoard) - hamming(m2.board, targetBoard)
+      return moveComponent + hammingComponent
     },
   })
-  const explored = new Set<ArrayBuffer>()
+  const explored = new Set<Board>()
   frontier.enqueue({
-    board: startBitboard,
+    board: startBoard,
     previous: null,
     moves: 0,
   })

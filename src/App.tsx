@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import logo from './logo.svg'
 import './App.css'
-import { testRunner } from './Solver/solver'
+import { testRunner, testPosition, testTarget } from './Solver/solver'
+import Board from './Components/Board'
 
 function App() {
   useEffect(() => {
@@ -9,7 +9,8 @@ function App() {
   }, [])
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <Board position={testPosition}></Board>
+      <Board position={testTarget}></Board>
     </div>
   )
 }
