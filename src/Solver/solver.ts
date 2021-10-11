@@ -50,12 +50,15 @@ export function createBoard(position: Position): Maybe<Board> {
   }
   const board = new ArrayBuffer(BOARD_BUFFER_SIZE)
   const view = new BigUint64Array(board)
+  // for each cell of the board
   for (let i = 0; i < size; i++) {
+    // shift a 1 mask i spaces
     const mask = 1n << BigInt(i)
     const row = Math.floor(i / width)
     const col = i % width
+    // get the orb type from the position
     const orbType = position[row][col]
-
+    // apply mask to array buffer portion for orb type
     view[orbType] |= mask
   }
   return board
@@ -67,8 +70,30 @@ type Move = {
   moves: number
 }
 
+// count 1 bits on a given bigint n
+function countSetBits(n: bigint): number {
+  let count = 0n
+  while (n !== 0n) {
+    count += n & 1n
+    n >>= 1n
+  }
+  return Number(count)
+}
+
 export function hamming(b1: Board, b2: Board): number {
-  return 0
+  debugger
+  const b1View = new BigUint64Array(b1)
+  const b2View = new BigUint64Array(b2)
+  let distance = 0
+  for (let i = 0; i < b1View.length; i++) {
+    const xor = b1View[i] ^ b2View[i]
+    distance += countSetBits(xor)
+  }
+
+  // two bits will be flipped for an incorrectly placed orb
+  // eg. fire 01 ^ fire 10 = fire 11
+  // so we need to divide the final distance by 2
+  return distance / 2
 }
 
 export function solvePosition(
