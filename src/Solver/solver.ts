@@ -1,6 +1,6 @@
 import { MinPriorityQueue } from '@datastructures-js/priority-queue'
 
-type Maybe<T> = T | null | undefined
+export type Maybe<T> = T | null | undefined
 
 export enum OrbType {
   Fire = 0,
@@ -23,20 +23,6 @@ const BOARD_BUFFER_SIZE = (ORB_TYPES * BIT_BOARD_SIZE) / BYTE_SIZE
 // 2d array representation of board state
 export type Position = OrbType[][]
 export type Board = ArrayBuffer
-
-export const testPosition: Position = [
-  [OrbType.Fire, OrbType.Earth, OrbType.Earth, OrbType.Water],
-  [OrbType.Earth, OrbType.Fire, OrbType.Fire, OrbType.Water],
-  [OrbType.Dark, OrbType.Dark, OrbType.Dark, OrbType.Water],
-  [OrbType.Fire, OrbType.Fire, OrbType.Fire, OrbType.Water],
-]
-
-export const testTarget: Position = [
-  [OrbType.Earth, OrbType.Earth, OrbType.Water, OrbType.Water],
-  [OrbType.Earth, OrbType.Fire, OrbType.Fire, OrbType.Water],
-  [OrbType.Dark, OrbType.Dark, OrbType.Dark, OrbType.Water],
-  [OrbType.Fire, OrbType.Fire, OrbType.Fire, OrbType.Fire],
-]
 
 // Creates bitboard representation of board state, represented by a
 // BigUint64Array ArrayBuffer
@@ -127,7 +113,7 @@ export function solvePosition(
   return null
 }
 
-export function testRunner() {
-  const result = solvePosition(testPosition, testTarget)
+export function testRunner(start: Position, target: Position) {
+  const result = solvePosition(start, target)
   console.log('test', result)
 }

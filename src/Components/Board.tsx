@@ -3,16 +3,25 @@ import { OrbType } from '../Solver/solver'
 import type { Position } from '../Solver/solver'
 import cx from 'clsx'
 import { createUseStyles } from 'react-jss'
-import { Classes } from 'jss'
+import type { Classes } from 'jss'
+import { CellCoordinates } from '../App'
 const useStyles = createUseStyles({
   root: {
     display: 'flex',
-    marginTop: '50px',
+    flexDirection: 'column',
+    padding: '50px',
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
   },
   orb: {
     height: '50px',
     width: '50px',
-    border: '1px solid black',
+    border: '2px solid black',
+  },
+  cursor: {
+    border: '2px solid white',
   },
   fire: {
     backgroundColor: 'red',
@@ -49,21 +58,31 @@ function getOrbClass(
   }
 }
 
-export default function Board(props: { position: Position }) {
-  const { position } = props
+export default function Board(props: {
+  position: Position
+  cursorCoordinates: CellCoordinates
+}) {
+  const { position, cursorCoordinates } = props
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
       {position.map((row: OrbType[], rowIndex: number) => {
         return (
-          <div key={`${rowIndex}`}>
+          <div className={classes.row} key={`${rowIndex}`}>
             {row.map((orb: OrbType, colIndex: number) => {
               const orbClass = getOrbClass(orb, classes)
+              const isCursor =
+                rowIndex === cursorCoordinates.row &&
+                colIndex === cursorCoordinates.column
               return (
                 <div
                   key={`${rowIndex} ${colIndex}`}
-                  className={cx(classes.orb, orbClass)}
+                  className={cx(
+                    classes.orb,
+                    orbClass,
+                    isCursor && classes.cursor
+                  )}
                 ></div>
               )
             })}
