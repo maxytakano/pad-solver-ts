@@ -47,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@types/ramda": "0.27.44",
     "prettier": "2.4.1"
   }
 }

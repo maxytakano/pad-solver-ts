@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { testRunner, OrbType, Position } from './Solver/solver'
 // import type { Maybe } from './Solver/solver'
+import * as R from 'ramda'
 import Board from './Components/Board'
 import { createUseStyles } from 'react-jss'
 
@@ -31,6 +32,17 @@ const targetPosition: Position = [
   [OrbType.Earth, OrbType.Fire, OrbType.Fire, OrbType.Water],
   [OrbType.Dark, OrbType.Dark, OrbType.Dark, OrbType.Water],
   [OrbType.Fire, OrbType.Fire, OrbType.Fire, OrbType.Fire],
+]
+
+const USED_KEYS = [
+  'w',
+  'a',
+  's',
+  'd',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'ArrowDown',
 ]
 
 function App() {
@@ -80,9 +92,12 @@ function App() {
     [canMove, swapCells]
   )
 
+  // TODO: Fix multiple key press w,s,up,down case
   const downHandler = useCallback(
-    ({ key }) => {
+    (e: KeyboardEvent) => {
+      const { key } = e
       const { row, column } = cursorCoordinates
+      if (R.includes(key, USED_KEYS)) e.preventDefault()
       switch (key) {
         case 'w':
         case 'ArrowUp':
